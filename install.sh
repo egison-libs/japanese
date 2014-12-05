@@ -1,4 +1,4 @@
 #!/bin/sh
 
-mkdir -p ~/.egison-libs/string/
-cp lib/string/japanese.egi ~/.egison-libs/string/
+mkdir -p ~/.egison/lib/string/
+cp lib/string/japanese.egi ~/.egison/lib/string/
