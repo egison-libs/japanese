@@ -28,9 +28,9 @@
        [<cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c) $rs>
         (S.concat {(match c char {[,'ァ' "A"] [,'ィ' "I"] [,'ゥ' "U"] [,'ェ' "E"] [,'ォ' "O"]}) (katakana-to-yomi rs)})]
        [<cons (& (| ,'ャ' ,'ュ' ,'ョ') $c) <cons ,'ー' $rs>>
-        (S.concat {(match c char {[,'ャ' {"YA"}] [,'ュ' {"YU"}] [,'ョ' {"YO"}]}) (katakana-to-yomi rs)})]
+        (S.concat {(match c char {[,'ャ' "YA"] [,'ュ' "YU"] [,'ョ' "YO"]}) (katakana-to-yomi rs)})]
        [<cons (& (| ,'ャ' ,'ュ' ,'ョ') $c) $rs>
-        (S.concat {(match c char {[,'ャ' {"YA"}] [,'ュ' {"YU"}] [,'ョ' {"YO"}]}) (katakana-to-yomi rs)})]
+        (S.concat {(match c char {[,'ャ' "YA"] [,'ュ' "YU"] [,'ョ' "YO"]}) (katakana-to-yomi rs)})]
        [<cons $c1 <cons (& (| ,'ャ' ,'ュ' ,'ョ') $c2) <cons ,'ー' $rs>>>
         (S.append (katakana-to-yomi-y-1 (pack {c1 c2})) (katakana-to-yomi rs))]
        [<cons $c1 <cons (& (| ,'ャ' ,'ュ' ,'ョ') $c2) $rs>>
