@@ -104,3 +104,83 @@
        [,"ヴ" "VU"] [,"ヰ" "I"] [,"ヱ" "E"] [,"ヮ" "WA"]
        [,"ヵ" "KA"] [,"ヶ" "KE"]
        })))
+
+;;
+;; Ascii (except '-')
+;;
+(define $zenkaku-ascii (unpack "＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～"))
+(define $zenkaku-ascii? (lambda [$c] (C.between? '＃' '～' c)))
+(define $zenkaku-ascii-regex "([＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～]+)")
+
+(define $hankaku-ascii (unpack "#$%&'()*+,./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"))
+(define $hankaku-ascii? 1#(member? %1 hankaku-ascii?))
+(define $hankaku-ascii-regex "([#$%&'()*+,./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]+)")
+
+(define $normalize-ascii
+  (lambda [$str]
+    (match str string
+      {[<regex ,zenkaku-ascii-regex $hs $ms $ts>
+        (normalize-ascii (S.concat hs (S.map (lookup %1 (zip zenkaku-ascii hankaku-ascii)) ms) ts))]
+       [_ str]})))
+
+;;
+;; Numbers
+;;
+(define $hankaku-nums (unpack "0123456789"))
+(define $hankaku-num? (lambda [$c] (C.between? '0' '9' c)))
+
+(define $parse-kanji-num
+  (lambda [$str]
+    (match str string
+      {
+       [<cons $x <cons ,'百' $xs>>
+        (+ (* 100 (parse-kanji-num (pack {x})))
+           (parse-kanji-num xs))]
+       [<cons ,'百' $xs>
+        (+ 100 (parse-kanji-num xs))]
+       [<cons $x <cons ,'十' $xs>>
+        (+ (* 10 (parse-kanji-num (pack {x})))
+           (parse-kanji-num xs))]
+       [<cons ,'十' $xs>
+        (+ 10 (parse-kanji-num xs))]
+       [,"一" 1]
+       [,"二" 2]
+       [,"三" 3]
+       [,"四" 4]
+       [,"五" 5]
+       [,"六" 6]
+       [,"七" 7]
+       [,"八" 8]
+       [,"九" 9]
+       [<nil> 0]})))
+
+;;
+;; Space
+;;
+(define $zenkaku-space-regex "([　]+)")
+
+(define $normalize-space
+  (lambda [$str]
+    (match str string
+      {[<regex ,zenkaku-space-regex $hs _ $ts> (normalize-space (S.concat {hs " " ts}))]
+       [_ str]})))
+
+
+;;
+;; Horizontal line
+;;
+(define $hr-like-regex "([‐‑‒–―−─ｰ])")
+(define $hr-regex      "([-‐‑‒–―−─ｰ])")
+
+(define $normalize-hr
+  (lambda [$str]
+    (match str string
+      {[<regex ,hr-like-regex $hs _ $ts> (normalize-hr (S.concat {hs "-" ts}))]
+       [_ str]})))
+
+(define $remove-spaces
+  (lambda [$str]
+    (match str string
+      {[<regex-cg ,(S.concat {hankaku-num-regex "[ ]+" hankaku-num-regex}) $hs <cons $hnum1 <cons $hnum2 <nil>>> $ts> (remove-spaces (S.concat {hs hnum1 "-" hnum2 (remove-spaces ts)}))]
+       [<regex ,"[ ]+" $hs _ $ts> (remove-spaces (S.concat {hs (remove-spaces ts)}))]
+       [_ str]})))
