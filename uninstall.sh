@@ -1,3 +1,3 @@
 #!/bin/sh
 
-rm ~/.egison/lib/string/japanese.egi
+rm ~/.egison/lib/japanese/japanese.egi
