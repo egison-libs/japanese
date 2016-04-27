@@ -10,7 +10,7 @@
 
 (define $katakana?
   (lambda [$c]
-    (C.between? 'ァ' 'ヾ')))
+    (C.between? 'ァ' 'ヾ' c)))
 
 (define $katakanas?
   (lambda [$s]
@@ -21,7 +21,11 @@
     (match s string
       {[<cons ,'ッ' $rs>
         (katakana-to-yomi rs)]
-       [<cons ,'ー' $rs>
+       [<cons  ,'ー' $rs>
+        (katakana-to-yomi rs)]
+       [<cons  ,'・' $rs>
+        (katakana-to-yomi rs)]
+       [<cons ?1#(not (katakana? %1)) $rs>
         (katakana-to-yomi rs)]
        [<cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c) <cons ,'ー' $rs>>
         (S.concat {(match c char {[,'ァ' "A"] [,'ィ' "I"] [,'ゥ' "U"] [,'ェ' "E"] [,'ォ' "O"]}) (katakana-to-yomi rs)})]
@@ -128,6 +132,7 @@
 ;;
 (define $hankaku-nums (unpack "0123456789"))
 (define $hankaku-num? (lambda [$c] (C.between? '0' '9' c)))
+(define $hankaku-nums-regex "([0123456789])")
 
 (define $parse-kanji-num
   (lambda [$str]
@@ -181,6 +186,5 @@
 (define $remove-spaces
   (lambda [$str]
     (match str string
-      {[<regex-cg ,(S.concat {hankaku-num-regex "[ ]+" hankaku-num-regex}) $hs <cons $hnum1 <cons $hnum2 <nil>>> $ts> (remove-spaces (S.concat {hs hnum1 "-" hnum2 (remove-spaces ts)}))]
-       [<regex ,"[ ]+" $hs _ $ts> (remove-spaces (S.concat {hs (remove-spaces ts)}))]
+      {[<regex ,"[ ]+" $hs _ $ts> (remove-spaces (S.concat {hs (remove-spaces ts)}))]
        [_ str]})))
