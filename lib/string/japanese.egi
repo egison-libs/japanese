@@ -1,16 +1,16 @@
 (define $hankaku-kana? 
   (lambda [$c]
-    (C.between? '｡' 'ﾟ')))
+    (C.between? c#｡ c#ﾟ)))
 
 (define $normalize-kana
   (lambda [$c]
     (if (hankaku-kana? c)
-      (nth (- (ctoi c) (ctoi '｡') -1) (unpack "。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜"))
+      (nth (- (ctoi c) (ctoi c#｡) -1) (unpack "。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜"))
       c)))
 
 (define $katakana?
   (lambda [$c]
-    (C.between? 'ァ' 'ヾ' c)))
+    (C.between? c#ァ c#ヾ c)))
 
 (define $katakanas?
   (lambda [$s]
@@ -19,31 +19,31 @@
 (define $katakana-to-yomi
   (lambda [$s]
     (match s string
-      {[<cons ,'ッ' $rs>
+      {[<cons ,c#ッ $rs>
         (katakana-to-yomi rs)]
-       [<cons  ,'ー' $rs>
+       [<cons  ,c#ー $rs>
         (katakana-to-yomi rs)]
-       [<cons  ,'・' $rs>
+       [<cons  ,c#・ $rs>
         (katakana-to-yomi rs)]
        [<cons ?1#(not (katakana? %1)) $rs>
         (katakana-to-yomi rs)]
-       [<cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c) <cons ,'ー' $rs>>
-        (S.concat {(match c char {[,'ァ' "A"] [,'ィ' "I"] [,'ゥ' "U"] [,'ェ' "E"] [,'ォ' "O"]}) (katakana-to-yomi rs)})]
-       [<cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c) $rs>
-        (S.concat {(match c char {[,'ァ' "A"] [,'ィ' "I"] [,'ゥ' "U"] [,'ェ' "E"] [,'ォ' "O"]}) (katakana-to-yomi rs)})]
-       [<cons (& (| ,'ャ' ,'ュ' ,'ョ') $c) <cons ,'ー' $rs>>
-        (S.concat {(match c char {[,'ャ' "YA"] [,'ュ' "YU"] [,'ョ' "YO"]}) (katakana-to-yomi rs)})]
-       [<cons (& (| ,'ャ' ,'ュ' ,'ョ') $c) $rs>
-        (S.concat {(match c char {[,'ャ' "YA"] [,'ュ' "YU"] [,'ョ' "YO"]}) (katakana-to-yomi rs)})]
-       [<cons $c1 <cons (& (| ,'ャ' ,'ュ' ,'ョ') $c2) <cons ,'ー' $rs>>>
+       [<cons (& (| ,c#ァ ,c#ィ ,c#ゥ ,c#ェ ,c#ォ) $c) <cons ,c#ー $rs>>
+        (S.concat {(match c char {[,c#ァ "A"] [,c#ィ "I"] [,c#ゥ "U"] [,c#ェ "E"] [,c#ォ "O"]}) (katakana-to-yomi rs)})]
+       [<cons (& (| ,c#ァ ,c#ィ ,c#ゥ ,c#ェ ,c#ォ) $c) $rs>
+        (S.concat {(match c char {[,c#ァ "A"] [,c#ィ "I"] [,c#ゥ "U"] [,c#ェ "E"] [,c#ォ "O"]}) (katakana-to-yomi rs)})]
+       [<cons (& (| ,c#ャ ,c#ュ ,c#ョ) $c) <cons ,c#ー $rs>>
+        (S.concat {(match c char {[,c#ャ "YA"] [,c#ュ "YU"] [,c#ョ "YO"]}) (katakana-to-yomi rs)})]
+       [<cons (& (| ,c#ャ ,c#ュ ,c#ョ) $c) $rs>
+        (S.concat {(match c char {[,c#ャ "YA"] [,c#ュ "YU"] [,c#ョ "YO"]}) (katakana-to-yomi rs)})]
+       [<cons $c1 <cons (& (| ,c#ャ ,c#ュ ,c#ョ) $c2) <cons ,c#ー $rs>>>
         (S.append (katakana-to-yomi-y-1 (pack {c1 c2})) (katakana-to-yomi rs))]
-       [<cons $c1 <cons (& (| ,'ャ' ,'ュ' ,'ョ') $c2) $rs>>
+       [<cons $c1 <cons (& (| ,c#ャ ,c#ュ ,c#ョ) $c2) $rs>>
         (S.append (katakana-to-yomi-y-1 (pack {c1 c2})) (katakana-to-yomi rs))]
-       [<cons $c1 <cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c2) <cons ,'ー' $rs>>>
+       [<cons $c1 <cons (& (| ,c#ァ ,c#ィ ,c#ゥ ,c#ェ ,c#ォ) $c2) <cons ,c#ー $rs>>>
         (S.append (katakana-to-yomi-x-1 (pack {c1 c2})) (katakana-to-yomi rs))]
-       [<cons $c1 <cons (& (| ,'ァ' ,'ィ' ,'ゥ' ,'ェ' ,'ォ') $c2) $rs>>
+       [<cons $c1 <cons (& (| ,c#ァ ,c#ィ ,c#ゥ ,c#ェ ,c#ォ) $c2) $rs>>
         (S.append (katakana-to-yomi-x-1 (pack {c1 c2})) (katakana-to-yomi rs))]
-       [<cons $c <cons ,'ー' $rs>>
+       [<cons $c <cons ,c#ー $rs>>
         (S.append (katakana-to-yomi-1 (pack {c})) (katakana-to-yomi rs))]
        [<cons $c $rs>
         (S.append (katakana-to-yomi-1 (pack {c})) (katakana-to-yomi rs))]
@@ -66,7 +66,7 @@
        [,"ミャ" "MYA"] [,"ミュ" "MYU"] [,"ミョ" "MYO"]
        [,"リャ" "RYA"] [,"リュ" "RYU"] [,"リョ" "RYO"]
        [,"フュ" "FYU"] [,"テュ" "CHU"] [,"デュ" "DYU"]
-       [<cons $c1 <cons $c2 <nil>>> (S.append (katakana-to-yomi-1 (pack {c1})) (match c2 char {[,'ャ' "YA"] [,'ュ' "YA"] [,'ョ' "YA"]}))]
+       [<cons $c1 <cons $c2 <nil>>> (S.append (katakana-to-yomi-1 (pack {c1})) (match c2 char {[,c#ャ "YA"] [,c#ュ "YA"] [,c#ョ "YA"]}))]
        })))
 
 (define $katakana-to-yomi-x-1
@@ -84,7 +84,7 @@
        [,"シィ" "SI"] [,"スィ" "SI"] [,"ズィ" "ZI"]
        [,"ティ" "TI"] [,"ディ" "DI"]
        [,"トゥ" "TU"] [,"ヅゥ" "DU"] [,"ドゥ" "DU"]
-       [<cons $c1 <cons $c2 <nil>>> (S.append (katakana-to-yomi-1 (pack {c1})) (match c2 char {[,'ァ' "A"] [,'ィ' "I"] [,'ゥ' "U"] [,'ェ' "E"] [,'ォ' "O"]}))]
+       [<cons $c1 <cons $c2 <nil>>> (S.append (katakana-to-yomi-1 (pack {c1})) (match c2 char {[,c#ァ "A"] [,c#ィ "I"] [,c#ゥ "U"] [,c#ェ "E"] [,c#ォ "O"]}))]
        })))
 
 (define $katakana-to-yomi-1
@@ -113,7 +113,7 @@
 ;; Ascii (except '-')
 ;;
 (define $zenkaku-ascii (unpack "＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～"))
-(define $zenkaku-ascii? (lambda [$c] (C.between? '＃' '～' c)))
+(define $zenkaku-ascii? (lambda [$c] (C.between? '＃ '～ c)))
 (define $zenkaku-ascii-regex "([＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～]+)")
 
 (define $hankaku-ascii (unpack "#$%&'()*+,./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"))
@@ -131,22 +131,22 @@
 ;; Numbers
 ;;
 (define $hankaku-nums (unpack "0123456789"))
-(define $hankaku-num? (lambda [$c] (C.between? '0' '9' c)))
+(define $hankaku-num? (lambda [$c] (C.between? '0 '9 c)))
 (define $hankaku-nums-regex "([0123456789])")
 
 (define $parse-kanji-num
   (lambda [$str]
     (match str string
       {
-       [<cons $x <cons ,'百' $xs>>
+       [<cons $x <cons ,c#百 $xs>>
         (+ (* 100 (parse-kanji-num (pack {x})))
            (parse-kanji-num xs))]
-       [<cons ,'百' $xs>
+       [<cons ,c#百 $xs>
         (+ 100 (parse-kanji-num xs))]
-       [<cons $x <cons ,'十' $xs>>
+       [<cons $x <cons ,c#十 $xs>>
         (+ (* 10 (parse-kanji-num (pack {x})))
            (parse-kanji-num xs))]
-       [<cons ,'十' $xs>
+       [<cons ,c#十 $xs>
         (+ 10 (parse-kanji-num xs))]
        [,"一" 1]
        [,"二" 2]
