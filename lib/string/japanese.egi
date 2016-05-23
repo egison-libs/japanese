@@ -113,7 +113,7 @@
 ;; Ascii (except '-')
 ;;
 (define $zenkaku-ascii (unpack "＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～"))
-(define $zenkaku-ascii? (lambda [$c] (C.between? '＃ '～ c)))
+(define $zenkaku-ascii? (lambda [$c] (C.between? c#' c#～ c)))
 (define $zenkaku-ascii-regex "([＃＄％＆＇（）＊＋，．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～]+)")
 
 (define $hankaku-ascii (unpack "#$%&'()*+,./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"))
