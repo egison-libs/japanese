@@ -188,3 +188,9 @@
     (match str string
       {[<regex ,"[ ]+" $hs _ $ts> (remove-spaces (S.concat {hs (remove-spaces ts)}))]
        [_ str]})))
+
+(define $remove-unread-chars
+  (lambda [$str]
+    (match str string
+      {[<regex ,"[ -']+" $hs _ $ts> (remove-spaces (S.concat {hs (remove-spaces ts)}))]
+       [_ str]})))
